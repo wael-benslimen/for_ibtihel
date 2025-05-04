@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Produits</h1>
+    </div>
+    {% for product in products %}
+    <div class="col-md-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ product.title }}</h5>
+                <p class="card-text">{{ product.description[:100] }}...</p>
+                <p class="card-text"><small class="text-muted">Genre: {{ product.genre }}</small></p>
+                <div class="rating mb-2">
+                    {% for i in range(5) %}
+                    <i class="far fa-star rating-star" data-rating="{{ i + 1 }}" data-product-id="{{ product.id }}"></i>
+                    {% endfor %}
+                </div>
+                <a href="/product/{{ product.id }}" class="btn btn-primary">Voir plus</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $('.rating-star').hover(
+        function() {
+            var rating = $(this).data('rating');
+            var stars = $(this).parent().children('.rating-star');
+            stars.each(function(index) {
+                if (index < rating) {
+                    $(this).addClass('fas').removeClass('far');
+                }
+            });
+        },
+        function() {
+            $(this).parent().children('.rating-star').addClass('far').removeClass('fas');
+        }
+    );
+
+    $('.rating-star').click(function() {
+        var rating = $(this).data('rating');
+        var productId = $(this).data('product-id');
+        
+        $.ajax({
+            url: '/rate/product',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                product_id: productId,
+                rating: rating
+            }),
+            success: function(response) {
+                alert('Note enregistrée avec succès!');
+            },
+            error: function(xhr) {
+                alert('Erreur lors de l\'enregistrement de la note.');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="jumbotron text-center bg-light p-5 rounded-3 mb-4">
+        <h1 class="display-4">Bienvenue sur notre système de recommandation</h1>
+        <p class="lead">Découvrez des produits adaptés à vos goûts grâce à notre système de recommandation hybride.</p>
+        {% if 'user_id' not in session %}
+            <div class="mt-4">
+                <a href="/register" class="btn btn-primary btn-lg mx-2">S'inscrire</a>
+                <a href="/login" class="btn btn-outline-primary btn-lg mx-2">Se connecter</a>
+            </div>
+        {% else %}
+            <div class="mt-4">
+                <a href="/products" class="btn btn-primary btn-lg mx-2">Voir les produits</a>
+                <a href="/recommendations" class="btn btn-success btn-lg mx-2">Mes recommandations</a>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if top_rated_products %}
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Produits les mieux notés</h2>
+        </div>
+        {% for product in top_rated_products %}
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.title }}</h5>
+                    <p class="card-text">{{ product.description[:100] }}...</p>
+                    <p class="card-text">
+                        <small class="text-muted">Note moyenne: {{ "%.1f"|format(product.average_rating) }}/5</small>
+                    </p>
+                    <a href="/product/{{ product.id }}" class="btn btn-primary">Voir plus</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
